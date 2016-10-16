@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 class severityModel:
 	def __init__(self):
@@ -33,8 +34,24 @@ class severityModel:
 		for cols in self.train.ix[:,2:117]:
 			self.categoryUnique[i] = len(np.unique(self.train.loc[:,cols]))
 			i += 1
+			
+	def getDescription(self):
+		'''
+			Gets the description of all the continuous variables
+		'''
+		print(self.train.loc[:,'cont1':])
+		print(self.test.loc[:,'cont1':])
+		
+	def plotCont(self)
+		'''
+			Gives a visual of the continuous variables
+		'''
+		colors = np.random.rand(N)
+		plt.scatter(self.train.loc[:,'cont1'], self.train.loc[:'cont2'], s=self.train.loc[:,'loss'],  alpha=0.5)
+		plt.show()
+		
 if __name__ == '__main__':
 	insuranceObj = severityModel()
 	insuranceObj.getUnique()
 	print(insuranceObj.categoryUnique)
-	
+	insuranceObj.getDescription()
