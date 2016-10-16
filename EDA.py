@@ -42,7 +42,7 @@ class severityModel:
 		print(self.train.loc[:,'cont1':].describe())
 		print(self.test.loc[:,'cont1':].describe())
 		
-	def plotCont(self)
+	def plotCont(self):
 		'''
 			Gives a visual of the continuous variables
 		'''
@@ -65,7 +65,32 @@ class severityModel:
 			Variables that have a minimum of 0 in the test dataset
 		'''
 		zeroMinVariables = ['cont9', 'cont10']
-		for contin in self.train.loc[:,'cont1':'cont14']:
+		
+		'''
+			The new columns to be added to the dataframe
+		'''
+		newCols = pd.DataFrame(columns = ['ratio1','ratio2','ratio3','ratio5','ratio6', 'ratio7', 'ratio8', 'ratio11', 'ratio12', 'ratio13', 'ratio14'])
+		
+		'''
+			adding the new columns which will show up as Nans to the train dataframe
+		'''
+		self.train = pd.concat([self.train, newCols], axis = 1)
+		
+		'''
+			List of column names that will be iterated over to create new ratios
+		'''
+		colNames = ['ratio1','ratio2','ratio3','ratio5','ratio6', 'ratio7', 'ratio8', 'ratio11', 'ratio12', 'ratio13', 'ratio14']
+		contNames = ['cont1','cont2','cont3','cont5','cont6', 'cont7', 'cont8', 'cont11', 'cont12', 'cont13', 'cont14'] 
+		
+		start = 1
+		colCounter = start
+		
+		while colCounter <= len(colNames) - 1:
+			self.train.loc[:,colNames[colCounter]] = self.train.loc[:,contNames[colCounter]]
+			
+			colCounter = colCounter + 1
+		#for contin in pd.concat([self.train.loc[:,'cont1':'cont8'], self.train.loc[:,'cont11':'cont14']], axis = 1):
+			
 	
 	
 		
@@ -74,3 +99,4 @@ if __name__ == '__main__':
 	insuranceObj.getUnique()
 	print(insuranceObj.categoryUnique)
 	insuranceObj.getDescription()
+	insuranceObj.getRatios()
