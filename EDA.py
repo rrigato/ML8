@@ -39,16 +39,35 @@ class severityModel:
 		'''
 			Gets the description of all the continuous variables
 		'''
-		print(self.train.loc[:,'cont1':])
-		print(self.test.loc[:,'cont1':])
+		print(self.train.loc[:,'cont1':].describe())
+		print(self.test.loc[:,'cont1':].describe())
 		
 	def plotCont(self)
 		'''
 			Gives a visual of the continuous variables
 		'''
 		colors = np.random.rand(N)
-		plt.scatter(self.train.loc[:,'cont1'], self.train.loc[:'cont2'], s=self.train.loc[:,'loss'],  alpha=0.5)
+		plt.scatter(np.array(self.train.loc[:,'cont1']).reshape(len(train), 1), np.array(self.train.loc[:'cont2']).reshape(len(train), 1), s=self.train.loc[:,'loss'],  alpha=0.5)
 		plt.show()
+		
+	def getRatios(self):
+		'''
+			does some automatic feature creation for ratios of the continuous variables
+		'''
+		'''
+			Subsets the entire train dataset into only continuous features and then further subsets
+			based on whether a continuous feature has a minimum greater than zero
+			The reason for this is because I will be creating ratios, and we cannot divide by zero
+		'''
+		self.train.loc[:,'cont1':'cont14'].loc[:,self.train.loc[:,'cont1':'cont14'].min() >0].head() 
+		
+		'''
+			Variables that have a minimum of 0 in the test dataset
+		'''
+		zeroMinVariables = ['cont9', 'cont10']
+		for contin in self.train.loc[:,'cont1':'cont14']:
+	
+	
 		
 if __name__ == '__main__':
 	insuranceObj = severityModel()
