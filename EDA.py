@@ -71,6 +71,8 @@ class severityModel:
 		'''
 		newCols = pd.DataFrame(columns = ['ratio1','ratio2','ratio3','ratio5','ratio6', 'ratio7', 'ratio8', 'ratio11', 'ratio12', 'ratio13', 'ratio14'])
 		
+		originalStart = self.train.shape[1]
+		
 		'''
 			adding the new columns which will show up as Nans to the train dataframe
 		'''
@@ -86,7 +88,7 @@ class severityModel:
 		colCounter = start
 		
 		while colCounter <= len(colNames) - 1:
-			self.train.loc[:,colNames[colCounter]] = self.train.loc[:,contNames[colCounter]]
+			self.train.loc[:,contNames[colCounter]] = self.train.loc[:,contNames[colCounter]]
 			
 			colCounter = colCounter + 1
 		#for contin in pd.concat([self.train.loc[:,'cont1':'cont8'], self.train.loc[:,'cont11':'cont14']], axis = 1):
