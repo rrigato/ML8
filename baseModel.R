@@ -11,13 +11,24 @@ loadTest = function()
 	test = as.data.frame(fread("C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\test.csv", sep = ','))
 }
 
-encodeTrain(train, test)
+############################################################
+#Does not include variable cat117, because it has really high cardinality
+#(over 300 levels)
+#
+#
+##############################################################
+encodeTrain = function(train, test)
 {
 	#one hot encodes all categorical variables,
 	#suppresses the intercept term
 	encodedCat =  model.matrix(~.-1, train[,2:116] )
 
 	encoded2 = model.matrix(~.-1, test[,2:116] )
+
+	#cast as data frames
+	encodedCat = as.data.frame(encodedCat)
+	encoded2 = as.data.frame(encoded2)
+
 
 	#levels of test not in train
 	notInTrain = names(encoded2)[which(!(names(encoded2)  %in% names(encodedCat)) )]
@@ -31,7 +42,7 @@ encodeTrain(train, test)
 	
 	#combines one hot encoded variables with continuous features and 
 	#outcome variable
-	allVars = as.data.frame(cbind(train[,1], encodedCat,fillTrain, train[,117:ncol(train)]))
+	allVars = as.data.frame(cbind(train[,1], encodedCat,fillTrain, train[,118:ncol(train)]))
 
 	#rename the first variable to id
 	names(allVars)[1] = 'id'
@@ -39,6 +50,14 @@ encodeTrain(train, test)
 	return(allVars)
 }
 
+
+
+############################################################
+#Does not include variable cat117, because it has really high cardinality
+#(over 300 levels)
+#
+#
+##############################################################
 encodeTest = function(train, test)
 {
 	#one hot encodes all categorical variables,
@@ -46,6 +65,11 @@ encodeTest = function(train, test)
 	encodedCat =  model.matrix(~.-1, train[,2:116] )
 
 	encoded2 = model.matrix(~.-1, test[,2:116] )
+
+
+	#cast as dataframes
+	encodedCat = as.data.frame(encodedCat)
+	encoded2 = as.data.frame(encoded2)
 
 	#levels of test not in train
 	notInTest = names(encodedCat)[which(!(names(encodedCat)  %in% names(encoded2)) )]
@@ -59,7 +83,7 @@ encodeTest = function(train, test)
 	
 	#combines one hot encoded variables with continuous features and 
 	#outcome variable
-	allVars2 = as.data.frame(cbind(test[,1], encoded2,fillTest, test[,117:ncol(test)]))
+	allVars2 = as.data.frame(cbind(test[,1], encoded2,fillTest, test[,118:ncol(test)]))
 
 	#rename the first variable to id
 	names(allVars2)[1] = 'id'
@@ -108,22 +132,25 @@ makeHoldout = function(ranTrain, train)
 #
 #
 ##############################################################
-install.packages("TDboost")
+#install.packages("TDboost")
 library(TDboost)
 
 train = loadTrain()
 test = loadTest()
 
-train = encodeCategorical(train)
-test = encodeCategorical(test)
+train = encodeTrain(train, test)
+test = encodeTest(loadTrain(), test)
 
 train = toFactor(train)
 test = toFactor(test)
 
 Train = makeTrain(getTrain(train), train)
 holdout = makeHoldout(getTrain(train), train)
+
+Train[is.na(Train)] = 0
+
 #everything except the id
-tdFit = TDboost(loss ~ .,  n.trees = 10, cv.folds = 5, data = Train[,-c(1)])
+tdFit = TDboost(loss ~ .,  n.trees = 10, cv.folds = 3, data = Train[,-c(1)])
 
 
 
