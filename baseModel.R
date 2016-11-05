@@ -33,14 +33,41 @@ encodeTrain(train, test)
 	#outcome variable
 	allVars = as.data.frame(cbind(train[,1], encodedCat,fillTrain, train[,117:ncol(train)]))
 
-
+	#rename the first variable to id
+	names(allVars)[1] = 'id'
 
 	return(allVars)
 }
 
 encodeTest = function(train, test)
 {
+	#one hot encodes all categorical variables,
+	#suppresses the intercept term
+	encodedCat =  model.matrix(~.-1, train[,2:116] )
+
+	encoded2 = model.matrix(~.-1, test[,2:116] )
+
+	#levels of test not in train
+	notInTest = names(encodedCat)[which(!(names(encodedCat)  %in% names(encoded2)) )]
+
+	#initializes an n column empty dataframe where n is the number of levels of variables in test
+	#that are not found in train
+	fillTest = data.frame(matrix(nrow = nrow(test), ncol = length(notInTest) ))
+
+	#gives the names of the empty data frame the names of the missing levels in train
+	names(fillTest) = notInTest
 	
+	#combines one hot encoded variables with continuous features and 
+	#outcome variable
+	allVars2 = as.data.frame(cbind(test[,1], encoded2,fillTest, test[,117:ncol(test)]))
+
+	#rename the first variable to id
+	names(allVars2)[1] = 'id'
+
+
+
+	return(allVars2)
+
 }
 
 toFactor = function(train)
