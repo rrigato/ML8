@@ -11,21 +11,37 @@ loadTest = function()
 	test = as.data.frame(fread("C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\test.csv", sep = ','))
 }
 
-encodeCategorical(train)
+encodeTrain(train, test)
 {
 	#one hot encodes all categorical variables,
 	#suppresses the intercept term
 	encodedCat =  model.matrix(~.-1, train[,2:116] )
 
+	encoded2 = model.matrix(~.-1, test[,2:116] )
+
+	#levels of test not in train
+	notInTrain = names(encoded2)[which(!(names(encoded2)  %in% names(encodedCat)) )]
+	
+	#initializes an n column empty dataframe where n is the number of levels of variables in test
+	#that are not found in train
+	fillTrain = data.frame(matrix(nrow = nrow(train), ncol = length(notInTrain) ))
+
+	#gives the names of the empty data frame the names of the missing levels in train
+	names(fillTrain) = notInTrain
+	
 	#combines one hot encoded variables with continuous features and 
 	#outcome variable
-	allVars = as.data.frame(cbind(train[,1], encodedCat, train[,117:ncol(train)]))
+	allVars = as.data.frame(cbind(train[,1], encodedCat,fillTrain, train[,117:ncol(train)]))
 
-	#levels of 
-	notInTrain = names(encoded2)[which(!(names(encoded2)  %in% names(encodedCat)) )]
+
+
 	return(allVars)
 }
 
+encodeTest = function(train, test)
+{
+	
+}
 
 toFactor = function(train)
 {
