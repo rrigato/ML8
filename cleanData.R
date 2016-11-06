@@ -15,7 +15,7 @@ loadTest = function()
 }
 
 ############################################################
-#Does not include variable cat117, because it has really high cardinality
+#Does not include variables cat113 to cat117, because it has really high cardinality
 #(over 300 levels)
 #
 #
@@ -24,9 +24,9 @@ encodeTrain = function(train, test)
 {
 	#one hot encodes all categorical variables,
 	#suppresses the intercept term
-	encodedCat =  model.matrix(~.-1, train[,2:116] )
+	encodedCat =  model.matrix(~.-1, train[,2:112] )
 
-	encoded2 = model.matrix(~.-1, test[,2:116] )
+	encoded2 = model.matrix(~.-1, test[,2:112] )
 
 	#cast as data frames
 	encodedCat = as.data.frame(encodedCat)
@@ -56,7 +56,7 @@ encodeTrain = function(train, test)
 
 
 ############################################################
-#Does not include variable cat117, because it has really high cardinality
+#Does not include variable cat112 cat117, because it has really high cardinality
 #(over 300 levels)
 #
 #
@@ -65,9 +65,9 @@ encodeTest = function(train, test)
 {
 	#one hot encodes all categorical variables,
 	#suppresses the intercept term
-	encodedCat =  model.matrix(~.-1, train[,2:116] )
+	encodedCat =  model.matrix(~.-1, train[,2:112] )
 
-	encoded2 = model.matrix(~.-1, test[,2:116] )
+	encoded2 = model.matrix(~.-1, test[,2:112] )
 
 
 	#cast as dataframes
@@ -99,6 +99,8 @@ encodeTest = function(train, test)
 
 writeCleanData = function(train,test)
 {
+	#library(data.table)
+	
 	print("Writing train and test to a csv")
 	write.csv(train, row.names = FALSE,
 		 "C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\cleanTrain.csv")
@@ -106,13 +108,17 @@ writeCleanData = function(train,test)
 		"C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\cleanTest.csv")
 
 }
-
+#install.packages("data.table")
 
 train = loadTrain()
 test = loadTest()
 
 train = encodeTrain(train, test)
 test = encodeTest(loadTrain(), test)
+
+train[is.na(train)] = 0
+test[is.na(test)] = 0
+
 
 writeCleanData(train,test)
 
