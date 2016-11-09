@@ -59,7 +59,7 @@ holdout = makeHoldout(getTrain(train), train)
 
 
 library(h2oEnsemble)
-h2o.init()
+h2o.init(nthread = -1)
 
 train = as.h2o( Train)
 #train = h2o.importFile("newtrain.csv")
@@ -101,9 +101,40 @@ result = predict(fit, newdata = test)
 
 result2 = matrix(nrow=nrow(test), ncol = 2)
 result2 = as.data.frame(result2)
-names(result2) = c("UNIQUE_ID", "Estimated_Ult_Avg_Severity")
+names(result2) = c("ID", "loss")
 
-result2$UNIQUE_ID = as.vector(test$UNIQUE_ID)
-result2$Estimated_Ult_Avg_Severity = as.vector(result$pred)
+result2$ID = as.vector(test$ID)
+result2$loss = as.vector(result$pred)
+
+write.csv(result2, "C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\holdoutPred.csv", row.names = FALSE)
+
+
+
+test = h2o.importFile("C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\cleanTest.csv")
+
+
+result = predict(fit, newdata = test)
+
+result2 = matrix(nrow=nrow(test), ncol = 2)
+result2 = as.data.frame(result2)
+names(result2) = c("ID", "loss")
+
+test = loadTest()
+result2$ID = as.vector(test$ID)
+result2$loss = as.vector(result$pred)
+
+result2 = cbind(result2, test$id)
+write.csv(result2, "C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\testPred1.csv", row.names = FALSE)
+
+library(data.table)
+testRes = as.data.frame(fread("C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\testPred1.csv", sep = ','))
+
+
+
+holdoutPred = as.data.frame(fread("C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\holdoutPred.csv"))
+
+
+
+
 
 
