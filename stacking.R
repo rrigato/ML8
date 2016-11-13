@@ -62,8 +62,8 @@ library(h2oEnsemble)
 h2o.init(nthread = -1)
 
 train = as.h2o( Train)
-#train = h2o.importFile("newtrain.csv")
-#test = h2o.importFile("newtest.csv")
+train = h2o.importFile("C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\cleanTrain.csv")
+test = h2o.importFile("C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\cleanTest.csv")
 
 test = as.h2o(holdout)
 trainID = train$id
@@ -74,7 +74,7 @@ testY = test$loss
 
 train = train[1:nrow(train), colnames(train)[2:ncol(train)]]
 
-test = train[1:nrow(train), colnames(train)[2:ncol(train)]]
+test = test[1:nrow(test), colnames(test)[2:ncol(test)]]
 
 
 
@@ -137,4 +137,7 @@ holdoutPred = as.data.frame(fread("C:\\Users\\Punkiehome1\\Downloads\\allstateKa
 
 
 
+
+names(testRes) = c("loss","id")
+write.csv(testRes, "C:\\Users\\Punkiehome1\\Downloads\\allstateKaggle\\result1.csv", row.names = FALSE)
 
